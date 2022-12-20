@@ -19,13 +19,13 @@ rule registeredCannotChangeOnceSet(method f, address voter){
 /* Expalanation on f.selector
 
  * On the right side of the implication above we see a f.selector.
- * The use of f.selector is very similar to its use in solidity -
+ * The use of f.selector is very similar to its use in Solidity -
  * since f is a parametric method that calls every function in contract in parallel,
  * we specify (or selecting) to address one particular path - when the f.selector was a specific function.
  */
 
 
-// Checks that a each voted contender's points receieved the correct amount of points
+// Checks that a each contender receieved the correct amount of points
 rule correctPointsIncreaseToContenders(address first, address second, address third){
     env e;
     uint256 firstPointsBefore = getPointsOfContender(e, first);
@@ -37,10 +37,9 @@ rule correctPointsIncreaseToContenders(address first, address second, address th
     assert (getPointsOfContender(e, first) - firstPointsBefore == 3, "first choice receieved other amount than 3 points");
     assert (getPointsOfContender(e, second) - secondPointsBefore == 2, "second choice receieved other amount than 2 points");
     assert (getPointsOfContender(e, third) - thirdPointsBefore == 1, "third choice receieved other amount than 1 points");
-
 }
 
-// Checks that a black listed voter cannaot get unlisted
+// Checks that a black listed voter cannot get unlisted
 rule onceBlackListedNotOut(method f, address voter){
     env e; calldataarg args;
     uint256 age; bool registeredBefore; bool voted; uint256 vote_attempts; bool black_listed_Before;
