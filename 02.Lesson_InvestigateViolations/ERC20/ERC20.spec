@@ -65,6 +65,10 @@ rule totalSupplyNotLessThanSingleUserBalance(method f, address user) {
 	calldataarg args;
 	uint256 totalSupplyBefore = totalSupply(e);
     uint256 userBalanceBefore = balanceOf(e, user);
+
+    // @note require that initial state is valid (not sure if this is the right assumption here...)
+    require (forall address user2 . (user != user2) => (balanceOf(e, user) + balanceOf(e, user2)) <= totalSupplyBefore);
+
     f(e, args);
     uint256 totalSupplyAfter = totalSupply(e);
     uint256 userBalanceAfter = balanceOf(e, user);
