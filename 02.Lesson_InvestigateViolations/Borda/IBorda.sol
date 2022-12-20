@@ -6,13 +6,13 @@ pragma solidity ^0.7.0;
  *
  * The election system follows the following rules:
  *
- * - Every user with an etheruem address is allowed to vote in the elections.
- * - A voter must register its address with some pesonal detail.
- * - Once a voter has registered he/she's allowed to vote once to 3 distinct contenders as he/she wishes.
+ * - Every user with an Etheruem address is allowed to vote in the elections.
+ * - A voter must register their address with some pesonal detail.
+ * - Once a voter has registered they are allowed to case a ranked vote for 3 distinct contenders in the election.
  * - The voter's 1st choice gets 3 points, their 2nd choice gets 2 points, and their 3rd choice gets 1 point.
- * - The 3 contenders has to be registerd as contenders.
- * - If a voter tries to vote a second time, he/she will be warned.
- * - If the voter reachs a 3rd attempt to vote, they will be black listed and punished financially in the future.
+ * - The 3 contenders have to be registered as contenders.
+ * - If a voter tries to vote a second time, they will be warned.
+ * - If a voter tries to vote a third time, they will be black listed and punished financially in the future.
  * - Contenders are allowed to vote as long as they follow all the rules specified above.
  *
  */

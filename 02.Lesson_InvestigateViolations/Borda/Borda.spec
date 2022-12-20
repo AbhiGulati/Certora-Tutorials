@@ -16,7 +16,7 @@ rule registeredCannotChangeOnceSet(method f, address voter){
 }
 
 
-/* Expalination on f.selector
+/* Expalanation on f.selector
 
  * On the right side of the implication above we see a f.selector.
  * The use of f.selector is very similar to its use in solidity -
