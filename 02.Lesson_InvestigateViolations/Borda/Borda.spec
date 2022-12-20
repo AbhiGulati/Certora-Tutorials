@@ -25,7 +25,7 @@ rule registeredCannotChangeOnceSet(method f, address voter){
  */
 
 
-// Checks that a each contender receieved the correct amount of points
+// Checks that each contender receieved the correct amount of points
 rule correctPointsIncreaseToContenders(address first, address second, address third){
     env e;
     uint256 firstPointsBefore = getPointsOfContender(e, first);
