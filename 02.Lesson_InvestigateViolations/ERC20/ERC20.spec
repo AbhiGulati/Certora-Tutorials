@@ -60,16 +60,25 @@ rule balanceChangesFromCertainFunctions(method f, address user){
 // Checks that the totalSupply of the token is at least equal to a single user's balance
 // This rule breaks also on a fixed version of ERC20 -
 // why? understand the infeasible state that the rule start with 
-rule totalSupplyNotLessThanSingleUserBalance(method f, address user) {
+rule totalSupplyNotLessThanSingleUserBalance(method f, address user, address otherUser) {
 	env e;
 	calldataarg args;
 	uint256 totalSupplyBefore = totalSupply(e);
     uint256 userBalanceBefore = balanceOf(e, user);
+    uint256 msgSenderBalanceBefore = balanceOf(e, e.msg.sender);
+    uint256 otherUserBalanceBefore = balanceOf(e, otherUser);
 
     // @note require that initial state is valid (not sure if this is the right assumption here...)
-    require (forall address user2 . (user != user2) => (balanceOf(e, user) + balanceOf(e, user2)) <= totalSupplyBefore);
+    require (user != otherUser) => (userBalanceBefore + otherUserBalanceBefore) <= totalSupplyBefore;
 
-    f(e, args);
+    if (f.selector == transferFrom(address,address,uint256).selector) {
+        transferFrom(e, otherUser, user, amount);
+    } else if (f.selector == burn(address,uint256).selector) {
+        burn(e, user, amount);
+    } else {
+        f(e, args);
+    }
+
     uint256 totalSupplyAfter = totalSupply(e);
     uint256 userBalanceAfter = balanceOf(e, user);
 	assert totalSupplyBefore >= userBalanceBefore => 
