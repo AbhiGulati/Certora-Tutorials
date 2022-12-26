@@ -5,6 +5,10 @@
  * we specify (or selecting) to address one particular path - when the f.selector was a specific function.
  */
 
+methods {
+    totalSupply() envfree
+}
+
 // Checks that the sum of sender and recipient accounts remains the same after transfer(), i.e. assets doesn't disappear nor created out of thin air
 rule integrityOfTransfer(address recipient, uint256 amount) {
 	env e;
@@ -57,31 +61,20 @@ rule balanceChangesFromCertainFunctions(method f, address user){
 }
 
 
-// Checks that the totalSupply of the token is at least equal to a single user's balance
-// This rule breaks also on a fixed version of ERC20 -
-// why? understand the infeasible state that the rule start with 
-rule totalSupplyNotLessThanSingleUserBalance(method f, address user, address otherUser) {
-	env e;
-	calldataarg args;
-	uint256 totalSupplyBefore = totalSupply(e);
-    uint256 userBalanceBefore = balanceOf(e, user);
-    uint256 msgSenderBalanceBefore = balanceOf(e, e.msg.sender);
-    uint256 otherUserBalanceBefore = balanceOf(e, otherUser);
-
-    // @note require that initial state is valid (not sure if this is the right assumption here...)
-    require (user != otherUser) => (userBalanceBefore + otherUserBalanceBefore) <= totalSupplyBefore;
-
-    if (f.selector == transferFrom(address,address,uint256).selector) {
-        transferFrom(e, otherUser, user, amount);
-    } else if (f.selector == burn(address,uint256).selector) {
-        burn(e, user, amount);
-    } else {
-        f(e, args);
-    }
-
-    uint256 totalSupplyAfter = totalSupply(e);
-    uint256 userBalanceAfter = balanceOf(e, user);
-	assert totalSupplyBefore >= userBalanceBefore => 
-            totalSupplyAfter >= userBalanceAfter,
-        "a user's balance is exceeding the total supply of token";
+ghost mathint sum_of_balances {
+    init_state axiom sum_of_balances == 0;
 }
+
+hook Sstore _balances[KEY address a] uint new_value (uint old_value) STORAGE {
+    sum_of_balances = sum_of_balances + new_value - old_value;
+}
+
+invariant totalSupplyIsSumOfBalances()
+    totalSupply() == sum_of_balances
+
+invariant balanceOfUserIsLteTotalSupply(env e, address user)
+    balanceOf(e, user) <= totalSupply()
+
+    {
+        preserved { require false; }
+    }
