@@ -78,4 +78,8 @@ contract PopsicleFinance is ERC20 {
     function assetsOf(address user) public view returns(uint) {
         return accounts[user].Rewards + balances[user] * (totalFeesEarnedPerShare - accounts[user].feesCollectedPerShare);
     }
+
+    function ethBalance(address user) public view returns(uint) {
+        return user.balance;
+    }
 }
