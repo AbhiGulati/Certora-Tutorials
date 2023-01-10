@@ -169,3 +169,23 @@ filtered {
     assert f.selector == deposit().selector || f.selector == withdraw(uint256).selector;
 }
 
+
+
+rule consecutiveCollectFeesDoesNothing() {
+    env e;
+    address u;
+
+    uint ethBalanceBefore = ethBalance(u);
+
+    collectFees(e);
+
+    uint ethBalanceAfter1 = ethBalance(u);
+
+    assert ethBalanceAfter1 != ethBalanceBefore => u == e.msg.sender;
+
+    collectFees(e);
+
+    uint ethBalanceAfter2 = ethBalance(u);
+
+    assert ethBalanceAfter1 == ethBalanceAfter2;
+}
