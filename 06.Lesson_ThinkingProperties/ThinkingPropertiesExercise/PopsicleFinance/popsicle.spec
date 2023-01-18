@@ -220,3 +220,30 @@ rule consecutiveCollectFeesDoesNothing() {
 
     assert ethBalanceAfter1 == ethBalanceAfter2;
 }
+
+rule collectFeesImmediatelyAfterDepositReturnsNoFees() {
+    env e;
+    address u;
+    require e.msg.sender == u;
+
+    require balanceOf(u) == 0;
+    require rewards[u] == 0;
+    require getReward(e) == 0;
+
+    uint rewardBeforeDeposit = rewards[u];
+    uint balanceBeforeDeposit = balanceOf(u);
+    uint expectedRewardDiff = balanceOf(u) * (totalFeesEarnedPerShareGhost * feesCollectedPerShare[u]);
+    deposit(e);
+
+    uint rewardBeforeCollect = rewards[u];
+    uint feePerShareBeforeCollect = getFeePerShare(e);
+    uint toPayBeforeCollect = getToPay(e);
+    uint ethBalanceBeforeCollect = ethBalance(u);
+
+    env e2;
+    require e2.msg.sender == u;
+    collectFees(e2);
+
+    uint ethBalanceAfterCollect = ethBalance(u);
+    assert ethBalanceBeforeCollect == ethBalanceAfterCollect;
+}
