@@ -3,7 +3,7 @@ methods {
     ethBalance(address user) returns (uint) envfree;
 }
 
-ghost mathint totalFeesEarnedPerShareGhost {
+ghost uint totalFeesEarnedPerShareGhost {
     init_state axiom totalFeesEarnedPerShareGhost == 0;
 }
 
@@ -27,6 +27,15 @@ ghost mathint sumOfAllAssets {
 hook Sstore accounts[KEY address u].Rewards uint newReward (uint oldReward) STORAGE {
     rewards[u] = newReward;
     sumOfAllAssets = sumOfAllAssets + newReward - oldReward;
+}
+
+// hook Sload bool init _initializing STORAGE {
+//     require initializing == init;
+// }
+
+hook Sload uint newTotalFeesEarnedPerShare totalFeesEarnedPerShare STORAGE {
+    totalFeesEarnedPerShareGhost = newTotalFeesEarnedPerShare;
+    // sumOfAllAssets = sumOfAllAssets + sumOfAllBalances * (newTotalFeesEarnedPerShare - oldTotalFeesEarnedPerShare);
 }
 
 hook Sstore totalFeesEarnedPerShare uint newTotalFeesEarnedPerShare (uint oldTotalFeesEarnedPerShare) STORAGE {
@@ -78,6 +87,28 @@ rule depositIncreasesTokenBalance() {
     uint balanceAfter = balanceOf(e.msg.sender);
 
     assert(balanceAfter > balanceBefore);
+}
+
+rule depositUnitTest() {
+    env e;
+    address user = e.msg.sender;
+    require totalFeesEarnedPerShareGhost >= 0 && totalFeesEarnedPerShareGhost < max_uint;
+
+    uint oldUserFeesCollectedPerShare = feesCollectedPerShare[user];
+    uint oldReward = rewards[user];
+    mathint uncasted = totalFeesEarnedPerShareGhost;
+    uint totalFeesEarnedPerShare = to_uint256(totalFeesEarnedPerShareGhost);
+    uint casted = totalFeesEarnedPerShare;
+
+    // uint rewardDiff = balanceOf()
+    deposit(e);
+
+    uint newReward = rewards[user];
+
+    // assert Rewards changed as expected
+    // assert balance increased as expected
+    uint newUserFeesCollectedPerShare = feesCollectedPerShare[user];
+    assert newUserFeesCollectedPerShare == totalFeesEarnedPerShare;
 }
 
 rule withdrawDecreasesBalance() {
