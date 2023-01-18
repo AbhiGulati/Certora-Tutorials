@@ -54,6 +54,18 @@ contract PopsicleFinance is ERC20 {
         emit Withdraw(msg.sender, amount);
     }
 
+    function getFeePerShare() public returns (uint) {
+        return totalFeesEarnedPerShare - accounts[msg.sender].feesCollectedPerShare;
+    }
+
+    function getToPay() public returns (uint) {
+        return getFeePerShare() * balances[msg.sender] + accounts[msg.sender].Rewards;
+    }
+
+    function getReward() public returns (uint) {
+        return accounts[msg.sender].Rewards;
+    }
+
     // collect fees
     function collectFees() public {
         require(totalFeesEarnedPerShare >= accounts[msg.sender].feesCollectedPerShare);
@@ -77,5 +89,9 @@ contract PopsicleFinance is ERC20 {
     // added by Certora for use in a spec - returns the deserved rewards collected up to this point.
     function assetsOf(address user) public view returns(uint) {
         return accounts[user].Rewards + balances[user] * (totalFeesEarnedPerShare - accounts[user].feesCollectedPerShare);
+    }
+
+    function ethBalance(address user) public view returns(uint) {
+        return user.balance;
     }
 }
