@@ -50,6 +50,7 @@ rule meetingCanBeStartedByAnyone() {
 
     env e2;
     require e2.block.timestamp > 100 && e2.block.timestamp < 200;
+    require e2.msg.value == 0;
 
     uint meetingStatus = getStateById(meetingId);
     bool meetingIsPending = meetingStatus == 1;
@@ -96,8 +97,10 @@ rule meetingCanBeJoinedIfStarted() {
 
     require getStateById(meetingId) == 2;
     uint numParticipants = getNumOfParticipents(meetingId);
+    require numParticipants < max_uint;
 
     env e;
+    require e.msg.value == 0;
     joinMeeting@withrevert(e, meetingId);
 
     assert !lastReverted;

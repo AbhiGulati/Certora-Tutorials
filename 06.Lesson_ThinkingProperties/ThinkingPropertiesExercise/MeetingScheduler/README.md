@@ -15,8 +15,7 @@
 ## Valid states
 - I generally don't understand this category
 - ❓ Is it fair to say that these will usually be proved by `invariant`s rather than `rule`s?
-- If a meeting is UNINITIALIZED or PENDING or CANCELLED, its number of participants will be 0    
-    - ❓ Is this appropriate in this category?
+- If a meeting is UNINITIALIZED or PENDING or CANCELLED, its number of participants will be 0
 
 
 ## Variable transitions
