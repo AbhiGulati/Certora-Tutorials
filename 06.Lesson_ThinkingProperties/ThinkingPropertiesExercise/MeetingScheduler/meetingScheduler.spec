@@ -7,6 +7,41 @@ methods {
     getNumOfParticipents(uint meetingId) returns (uint) envfree;
 }
 
+
+// This invariant shows that meetings always start out uninitialized.
+// We `require false` in the `preserved` block because we are only concerned
+// with the initial state
+invariant meetingStartsUninitialized(uint meetingId)
+    getStateById(meetingId) == 0
+
+    { 
+        preserved
+        {
+            require false;
+        }
+    }
+
+rule howMeetingLeavesUninitialized(uint meetingId) {
+    require getStateById(meetingId) == 0;
+
+    method f;
+    env e;
+    calldataarg args;
+    uint meetingId2;
+    uint startTime;
+    uint endTime;
+
+    if (f.selector == scheduleMeeting(uint256, uint256, uint256).selector) {
+        scheduleMeeting(e, meetingId2, startTime, endTime);
+    } else {
+        f(e, args);
+    }
+
+    assert getStateById(meetingId) != 0 => 
+        (f.selector == scheduleMeeting(uint256, uint256, uint256).selector) && (meetingId == meetingId2);
+
+}
+
 rule meetingCanBeStartedByAnyone() {
     env e;
     uint meetingId = 0;
