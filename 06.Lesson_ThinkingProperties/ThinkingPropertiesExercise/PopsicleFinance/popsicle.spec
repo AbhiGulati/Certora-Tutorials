@@ -160,7 +160,7 @@ filtered {
     assert(f.selector == withdraw(uint).selector);
 }
 
-rule callersETHBalancesIncreasesOnlyFromCollectFees(method f)
+rule callersETHBalancesIncreasesOnlyFromWithdrawOrCollectFees(method f)
 filtered {
     f -> !f.isView
 }
@@ -176,7 +176,7 @@ filtered {
 
     require(balanceAfter > balanceBefore);
 
-    assert f.selector == collectFees().selector;
+    assert f.selector == collectFees().selector || f.selector == withdraw(uint256).selector;
 }
 
 

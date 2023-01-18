@@ -15,8 +15,7 @@
 ## Variable transitions
 - ✅ If `reward` increased, it was from a call to `deposit` or `withdraw`
     - Need to set up a ghost to access `reward`
-- ❌ If caller's ETH balance increased, it was from a call to `collectFees()`
-    - ❓ This one is failing. It seems to think that a call to `withdraw` triggers an ETH transfer. See anything wrong with my spec `callersETHBalancesIncreasesOnlyFromCollectFees`?
+- ✅ If caller's ETH balance increased, it was from a call to `collectFees()` or `withdraw()`
 - ✅ Create a ghost for the sum of all assets of users in the system. Confirm that only certain functions can change this amount.
     - ❓I had to write a lot of ghosts for this one. The rule is `sumOfAllAssetsDoesntChange`, and it failed for `transfer` and `transferFrom` which I believe is expected because there's a bug in the Popsicle code. Would love a sanity check of my approach.
 
