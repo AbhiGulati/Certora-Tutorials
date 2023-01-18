@@ -180,7 +180,7 @@ filtered {
 }
 
 
-rule rewardIncreasesOnlyDepositOrWithdraw(method f)
+rule rewardIncreasesOnlyFromDepositOrWithdraw(method f)
 filtered {
     f -> !f.isView
 }
